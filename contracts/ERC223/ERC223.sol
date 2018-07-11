@@ -3,7 +3,6 @@ pragma solidity ^0.4.24;
  /* New ERC223 contract interface */
 
 contract ERC223 {
-  uint public totalSupply;
   function balanceOf(address who) public view returns (uint);
 
   function name() public view returns (string _name);

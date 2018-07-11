@@ -1,20 +1,20 @@
 pragma solidity ^0.4.24;
 
-import 'SafeMath.sol';
-import 'ERC20.sol';
-import 'ERC223.sol';
-import 'ContractReceiver.sol';
-import 'Owned.sol';
+import './SafeMath.sol';
+import './ERC20.sol';
+import './ERC223.sol';
+import './ContractReceiver.sol';
+import './Owned.sol';
 
-contract VeryToken is owned, ERC20, ERC223 {
+contract VeryToken is Owned, ERC20, ERC223 {
   using SafeMath for uint;
 
-  string name;
-  string symbol;
-  uint256 totalSupply;
+  string _name;
+  string _symbol;
+  uint256 _totalSupply;
   uint256 buyPrice = 0;
   // 18 decimals is the strongly suggested default, avoid changing it
-  uint8 decimals = 18;
+  uint8 _decimals = 18;
 
   // this created an array with all balances
   mapping (address => uint256) public balances;
@@ -22,11 +22,11 @@ contract VeryToken is owned, ERC20, ERC223 {
 
   /* initializes contract with initial supply tokens to the creator of the
   contract */
-  function VeryToken(uint256 initialSupply, string tokenName, string tokenSymbol) public {
-    name = tokenName;
-    symbol = tokenSymbol;
-    tokenSupply = initialSupply * 10 ** uint256(_decimals);
-    balances[msg.sender] = totalSupply; // give creator all initial tokens
+  constructor(uint256 initialSupply, string tokenName, string tokenSymbol) public {
+    _name = tokenName;
+    _symbol = tokenSymbol;
+    _totalSupply = initialSupply * 10 ** uint256(_decimals);
+    balances[msg.sender] = _totalSupply; // give creator all initial tokens
   }
 
   function balanceOf(address who) public view returns (uint256) {
@@ -34,19 +34,19 @@ contract VeryToken is owned, ERC20, ERC223 {
   }
 
   function name() public view returns (string) {
-    return name;
+    return _name;
   }
 
   function symbol() public view returns (string) {
-    return symbol;
+    return _symbol;
   }
 
   function decimals() public view returns (uint8) {
-    return decimals;
+    return _decimals;
   }
 
-  function totalSupply() public view returns (string) {
-    return totalSupply;
+  function totalSupply() public view returns (uint256) {
+    return _totalSupply;
   }
 
   function setPrices(uint256 newBuyPrice) onlyOwner public {
@@ -55,13 +55,15 @@ contract VeryToken is owned, ERC20, ERC223 {
 
   function buy() payable public {
     uint amount = msg.value / buyPrice;               // calculates the amount
-    _transfer(this, msg.sender, amount);              // makes the transfers
+    bytes memory empty;
+    _transfer(this, msg.sender, amount, empty);              // makes the transfers
   }
 
-  function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
+  function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
     require(_value <= allowances[_from][msg.sender]);     // Check allowance
     allowances[_from][msg.sender] -= _value;
-    _transfer(_from, _to, _value);
+    bytes memory empty;
+    _transfer(_from, _to, _value, empty);
     return true;
   }
 
@@ -69,14 +71,14 @@ contract VeryToken is owned, ERC20, ERC223 {
      return allowances[_owner][_spender];
    }
 
-  function approve(address _spender, uint256 _value) public returns (bool success) {
+  function approve(address _spender, uint256 _value) public returns (bool) {
     allowances[msg.sender][_spender] = _value;
     emit Approval(msg.sender, _spender, _value);
     return true;
   }
 
   // function that is called when a user or another contract wants to transfer funds .
-  function transfer(address _to, uint _value, bytes _data, string _custom_fallback) public returns (bool success) {
+  function transfer(address _to, uint _value, bytes _data, string _custom_fallback) public returns (bool) {
     if (isContract(_to)) {
       if (balanceOf(msg.sender) < _value) {
         revert();
@@ -89,16 +91,16 @@ contract VeryToken is owned, ERC20, ERC223 {
       return true;
     }
 
-    return transferToAddress(_to, _value, _data);
+    return transferToAddress(msg.sender, _to, _value, _data);
   }
 
   // function that is called when a user or another contract wants to transfer funds .
-  function transfer(address _to, uint _value, bytes _data) public returns (bool success) {
-    _transfer(msg.sender, _to, _value, empty);
+  function transfer(address _to, uint _value, bytes _data) public returns (bool) {
+    _transfer(msg.sender, _to, _value, _data);
   }
 
   // function that is called when transaction target is an address .
-  function transfer(address _to, uint256 _value) public returns (bool success) {
+  function transfer(address _to, uint256 _value) public returns (bool) {
     // standard function transfer similar to ERC20 transfer with no _data .
     // added due to backwards compatibility reasons .
     bytes memory empty;
@@ -116,7 +118,7 @@ contract VeryToken is owned, ERC20, ERC223 {
     return (length > 0);
   }
 
-  function _transfer(address _from, address _to, uint _value, bytes _data) private returns (bool success) {
+  function _transfer(address _from, address _to, uint _value, bytes _data) private returns (bool) {
     if (isContract(_to)) {
       return transferToContract(_from, _to, _value, _data);
     }
@@ -125,7 +127,7 @@ contract VeryToken is owned, ERC20, ERC223 {
   }
 
   // function that is called when transaction target is an address .
-  function transferToAddress(address _from, address _to, uint _value, bytes _data) private returns (bool success) {
+  function transferToAddress(address _from, address _to, uint _value, bytes _data) private returns (bool) {
     // prevent transfer to 0x0 .
     if (_to == 0x0) {
       revert();
@@ -143,7 +145,7 @@ contract VeryToken is owned, ERC20, ERC223 {
   }
 
   //function that is called when transaction target is a contract .
-  function transferToContract(address _from, address _to, uint _value, bytes _data) private returns (bool success) {
+  function transferToContract(address _from, address _to, uint _value, bytes _data) private returns (bool) {
     // prevent transfer to 0x0 .
     if (_to == 0x0) {
       revert();
