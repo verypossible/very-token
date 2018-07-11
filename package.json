@@ -1,0 +1,9 @@
+{
+  "name": "very-token",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:verypossible/very-token.git",
+  "author": "Eric Bower <neurosnap@gmail.com>",
+  "license": "MIT",
+  "private": true
+}
