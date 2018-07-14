@@ -78,23 +78,6 @@ contract VeryToken is Owned, ERC20, ERC223 {
   }
 
   // function that is called when a user or another contract wants to transfer funds .
-  function transfer(address _to, uint _value, bytes _data, string _custom_fallback) public returns (bool) {
-    if (isContract(_to)) {
-      if (balanceOf(msg.sender) < _value) {
-        revert();
-      }
-
-      balances[msg.sender] = SafeMath.sub(balanceOf(msg.sender), _value);
-      balances[_to] = SafeMath.add(balanceOf(_to), _value);
-      assert(_to.call.value(0)(bytes4(keccak256(_custom_fallback)), msg.sender, _value, _data));
-      emit Transfer(msg.sender, _to, _value, _data);
-      return true;
-    }
-
-    return transferToAddress(msg.sender, _to, _value, _data);
-  }
-
-  // function that is called when a user or another contract wants to transfer funds .
   function transfer(address _to, uint _value, bytes _data) public returns (bool) {
     _transfer(msg.sender, _to, _value, _data);
   }

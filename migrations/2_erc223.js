@@ -1,9 +1,10 @@
 const Web3 = require('web3');
 const TruffleConfig = require('../truffle');
-const Migrations = artifacts.require("./Migrations.sol");
+const VeryToken = artifacts.require("./VeryToken.sol");
 
 module.exports = function(deployer, network, addresses) {
   const config = TruffleConfig.networks[network];
+  console.log('>> Running migration');
 
   if (process.env.PASS) {
     const web3 = new Web3(new Web3.providers.HttpProvider('http://' + config.host + ':' + config.port));
@@ -13,5 +14,5 @@ module.exports = function(deployer, network, addresses) {
   }
 
   console.log('>> Deploying migration');
-  deployer.deploy(Migrations);
+  deployer.deploy(VeryToken);
 };

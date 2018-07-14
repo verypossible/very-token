@@ -5,5 +5,12 @@
   "repository": "git@github.com:verypossible/very-token.git",
   "author": "Eric Bower <neurosnap@gmail.com>",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "scripts": {
+    "deploy": "node deploy.js"
+  },
+  "dependencies": {
+    "solc": "^0.4.24",
+    "web3": "^1.0.0-beta.34"
+  }
 }
