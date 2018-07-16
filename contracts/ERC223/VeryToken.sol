@@ -1,10 +1,11 @@
 pragma solidity ^0.4.24;
 
-import './SafeMath.sol';
+import '../SafeMath.sol';
+import '../Ownable.sol';
+
 import './ERC20.sol';
 import './ERC223.sol';
 import './ContractReceiver.sol';
-import './Ownable.sol';
 
 contract VeryToken is Ownable, ERC20, ERC223 {
   string _name;
@@ -90,7 +91,7 @@ contract VeryToken is Ownable, ERC20, ERC223 {
 
     balances[msg.sender] = SafeMath.sub(balanceOf(msg.sender), _value);
     balances[_to] = SafeMath.add(balanceOf(_to), _value);
-    assert(_to.call.value(0)(bytes4(keccak256(_custom_fallback)), msg.sender, _value, _data));
+    assert(_to.call.value(0)(bytes4(keccak256(bytes(_custom_fallback))), msg.sender, _value, _data));
     emit Transfer(msg.sender, _to, _value, _data);
     return true;
   }
