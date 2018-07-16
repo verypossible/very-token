@@ -5,14 +5,12 @@ pragma solidity ^0.4.20;
  */
 
  contract ContractReceiver {
-
     struct TKN {
         address sender;
         uint value;
         bytes data;
         bytes4 sig;
     }
-
 
     function tokenFallback(address _from, uint _value, bytes _data) public pure {
       TKN memory tkn;

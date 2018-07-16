@@ -14,5 +14,5 @@ module.exports = function(deployer, network, addresses) {
   }
 
   console.log('>> Deploying migration');
-  deployer.deploy(VeryToken);
+  deployer.deploy(VeryToken, 100000, "EROCK", "ERI");
 };
